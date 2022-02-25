@@ -1,17 +1,14 @@
-#!bin/bash
+#!/bin/bash
 
-monthlast=`date --date='-1 month' '+%Y-%m-%d'`
-monthnow=`date '+%Y-%m-%d'`
+timemonth=$((60*60*24*30))
 
-#-newermt 2022-02-24
-
-for file in $(find /home/testcompartida/ -newermt "$monthlast" -type f)
+for file in /mnt/share/*.TXT
 do
-        echo "$file"
-        #| awk '{print $7,$6,$8}' | date --date='-1 month' '+%Y-%m'
+        filedate=`stat -c %Y "$file"`
+        now=`date +%s`
+        difference=$((${now} - ${filedate}))
+
+        if [ ${difference} -gt ${timemonth} ]; then
+                rm -rf $file >> /dev/null 2>&1
+        fi
 done
-
-#find /home/testcompartida -type f -mtime +60 | xargs rm -rf > /dev/null 2>&1
-
-
-#| ls -l | awk '{print $7,$6,$8}' | date '+%Y-%m'
